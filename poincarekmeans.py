@@ -4,7 +4,7 @@ import numpy as np
 ## K-Means in the Poincare Disk model
 
 class PoincareKMeans(object):
-    def __init__(self,n_clusters=8,n_init=20,max_iter=300,tol=1e-8,verbose=True):
+    def __init__(self,n_clusters=8,n_init=20,max_iter=300,tol=1e-8,verbose=True,curvature=-1):
         self.n_clusters = n_clusters
         self.n_init = n_init
         self.max_iter = max_iter
@@ -12,7 +12,7 @@ class PoincareKMeans(object):
         self.verbose =  verbose
         self.labels_=None
         self.cluster_centers_ = None
-           
+        self.curvature = curvature
 
     def fit(self,X):
         n_samples = X.shape[0]
@@ -69,24 +69,24 @@ class PoincareKMeans(object):
         distances = np.zeros((n_samples,n_clusters))
         for i in range(n_clusters):
             centroid = np.tile(clusters[i,:],(n_samples,1))
-            den1 = 1-np.linalg.norm(X,axis=1)**2
-            den2 = 1-np.linalg.norm(centroid,axis=1)**2
+            den1 = 1+self.curvature*np.linalg.norm(X,axis=1)**2
+            den2 = 1+self.curvature*np.linalg.norm(centroid,axis=1)**2
             the_num = np.linalg.norm(X-centroid,axis=1)**2
-            distances[:,i] = np.arccosh(1+2*the_num/(den1*den2))
+            distances[:,i] = np.arccosh(1-2*self.curvature*the_num/(den1*den2))
         
         return distances
       
     def _poinc_to_minsk(self,points):
         minsk_points = np.zeros((points.shape[0],3))
-        minsk_points[:,0] = np.apply_along_axis(arr=points,axis=1,func1d=lambda v: 2*v[0]/(1-v[0]**2-v[1]**2))
-        minsk_points[:,1] = np.apply_along_axis(arr=points,axis=1,func1d=lambda v: 2*v[1]/(1-v[0]**2-v[1]**2))
-        minsk_points[:,2] = np.apply_along_axis(arr=points,axis=1,func1d=lambda v: (1+v[0]**2+v[1]**2)/(1-v[0]**2-v[1]**2))
+        minsk_points[:,0] = np.apply_along_axis(arr=points,axis=1,func1d=lambda v: 2*v[0]/(1+self.curvature*(v[0]**2+v[1]**2)))
+        minsk_points[:,1] = np.apply_along_axis(arr=points,axis=1,func1d=lambda v: 2*v[1]/(1+self.curvature*(v[0]**2+v[1]**2)))
+        minsk_points[:,2] = np.apply_along_axis(arr=points,axis=1,func1d=lambda v: (1-self.curvature*(v[0]**2+v[1]**2))/(1+self.curvature*(v[0]**2+v[1]**2))*1/np.sqrt(abs(self.curvature)))
         return minsk_points
 
     def _minsk_to_poinc(self,points):
         poinc_points = np.zeros((points.shape[0],2))
-        poinc_points[:,0] = points[:,0]/(1+points[:,2])
-        poinc_points[:,1] = points[:,1]/(1+points[:,2])
+        poinc_points[:,0] = points[:,0]/(1+np.sqrt(abs(self.curvature))*points[:,2])
+        poinc_points[:,1] = points[:,1]/(1+np.sqrt(abs(self.curvature))*points[:,2])
         return poinc_points
 
     def _hyperbolic_centroid(self,points):
