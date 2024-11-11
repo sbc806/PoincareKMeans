@@ -98,4 +98,4 @@ class LorentzKMeans(object):
         normalizer = np.sqrt(np.abs(minsk_centroid[1]**2+minsk_centroid[2]**2-minsk_centroid[0]**2))
         minsk_centroid = minsk_centroid/normalizer
         # return self._minsk_to_poinc(minsk_centroid.reshape((1,3)))[0]
-        return minsck_centroid.reshape((1,3))
+        return minsk_centroid.reshape((1,3))
