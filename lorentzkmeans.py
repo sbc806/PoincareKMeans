@@ -24,7 +24,7 @@ class LorentzKMeans(object):
                 distances = self._get_distances_to_clusters(X,centroids)
                 labels = np.argmin(distances,axis=1)
 
-                new_centroids = np.zeros((self.n_clusters,2))
+                new_centroids = np.zeros((self.n_clusters,3))
                 for i in range(self.n_clusters):
                     indices = np.where(labels==i)[0]
                     if len(indices)>0:
