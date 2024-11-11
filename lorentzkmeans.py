@@ -3,7 +3,7 @@ import numpy as np
 
 ## K-Means in the Poincare Disk model
 
-class PoincareKMeans(object):
+class LorentzKMeans(object):
     def __init__(self,n_clusters=8,n_init=20,max_iter=300,tol=1e-8,verbose=True,curvature=-1):
         self.n_clusters = n_clusters
         self.n_init = n_init
