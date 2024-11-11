@@ -69,7 +69,7 @@ class LorentzKMeans(object):
         distances = np.zeros((n_samples,n_clusters))
         for i in range(n_clusters):
             centroid = np.tile(clusters[i,:],(n_samples,1))
-            num = abs(self.curvature)*(-X[:,0]*clusters[i,0]+X[:,1]*clusters[i,1]+X[:,2]*clusters[i,2])
+            num = self.curvature*(-X[:,0]*clusters[i,0]+X[:,1]*clusters[i,1]+X[:,2]*clusters[i,2])
             distances[:,i] = 1/np.sqrt(abs(self.curvature))*np.arccosh(num)
             # den1 = 1+self.curvature*np.linalg.norm(X,axis=1)**2
             # den2 = 1+self.curvature*np.linalg.norm(centroid,axis=1)**2
