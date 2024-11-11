@@ -69,10 +69,12 @@ class LorentzKMeans(object):
         distances = np.zeros((n_samples,n_clusters))
         for i in range(n_clusters):
             centroid = np.tile(clusters[i,:],(n_samples,1))
-            den1 = 1+self.curvature*np.linalg.norm(X,axis=1)**2
-            den2 = 1+self.curvature*np.linalg.norm(centroid,axis=1)**2
-            the_num = np.linalg.norm(X-centroid,axis=1)**2
-            distances[:,i] = np.arccosh(1-2*self.curvature*the_num/(den1*den2))
+            num = abs(self.curvature)*(-X[:,0]*clusters[i,0]+X[:,1]*clusters[i,1]+X[:,2]*clusters[i,2])
+            distances[:,i] = 1/np.sqrt(abs(self.curvature)*np.arccosh(num)
+            # den1 = 1+self.curvature*np.linalg.norm(X,axis=1)**2
+            # den2 = 1+self.curvature*np.linalg.norm(centroid,axis=1)**2
+            # the_num = np.linalg.norm(X-centroid,axis=1)**2
+            # distances[:,i] = np.arccosh(1-2*self.curvature*the_num/(den1*den2))
         
         return distances
       
@@ -90,8 +92,10 @@ class LorentzKMeans(object):
         return poinc_points
 
     def _hyperbolic_centroid(self,points):
-        minsk_points = self._poinc_to_minsk(points)
+        # minsk_points = self._poinc_to_minsk(points)
         minsk_centroid = np.mean(minsk_points,axis=0)
-        normalizer = np.sqrt(np.abs(minsk_centroid[0]**2+minsk_centroid[1]**2-minsk_centroid[2]**2))
+        # normalizer = np.sqrt(np.abs(minsk_centroid[0]**2+minsk_centroid[1]**2-minsk_centroid[2]**2))
+        normalizer = np.sqrt(np.abs(minsk_centroid[1]**2+minsk_centroid[2]**2-minsk_centroid[0]**2))
         minsk_centroid = minsk_centroid/normalizer
-        return self._minsk_to_poinc(minsk_centroid.reshape((1,3)))[0]
+        # return self._minsk_to_poinc(minsk_centroid.reshape((1,3)))[0]
+        return minsck_centroid.reshape((1,3))
