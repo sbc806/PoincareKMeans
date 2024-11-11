@@ -93,6 +93,7 @@ class LorentzKMeans(object):
 
     def _hyperbolic_centroid(self,points):
         # minsk_points = self._poinc_to_minsk(points)
+        minsk_points = points
         minsk_centroid = np.mean(minsk_points,axis=0)
         # normalizer = np.sqrt(np.abs(minsk_centroid[0]**2+minsk_centroid[1]**2-minsk_centroid[2]**2))
         normalizer = np.sqrt(np.abs(minsk_centroid[1]**2+minsk_centroid[2]**2-minsk_centroid[0]**2))
